@@ -1,5 +1,6 @@
 node_modules/
 .DS_Store
+.env
 docs/
 data/npm-map.json
 data/stars.json

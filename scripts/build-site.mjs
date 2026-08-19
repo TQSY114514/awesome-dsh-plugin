@@ -19,6 +19,15 @@ import { CAT_IDS as ENTRY_CAT_IDS } from './lib/entries.mjs'
 const ORIGIN = 'https://awesome-dsh-plugin.com'
 const DATES_FILE = 'data/added-dates.json'
 const SCREENSHOTS_FILE = 'data/screenshots.json'
+const cloudflareAnalyticsToken = process.env.CLOUDFLARE_WEB_ANALYTICS_TOKEN?.trim()
+
+if (cloudflareAnalyticsToken && !/^[a-f0-9]{32}$/i.test(cloudflareAnalyticsToken)) {
+  throw new Error('CLOUDFLARE_WEB_ANALYTICS_TOKEN must be a 32-character hexadecimal token')
+}
+
+const cloudflareAnalytics = cloudflareAnalyticsToken
+  ? `<!-- Cloudflare Web Analytics --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token: cloudflareAnalyticsToken })}'></script><!-- End Cloudflare Web Analytics -->`
+  : ''
 
 // docs/ is fully generated: static assets live in site/assets/ and are copied
 // in here, so a from-scratch build (empty docs/) produces the complete site
@@ -257,6 +266,7 @@ function langRedirect(current) {
 }
 
 const master = fs.readFileSync('site/template.html', 'utf8')
+  .replaceAll('__CLOUDFLARE_WEB_ANALYTICS__', () => cloudflareAnalytics)
 
 for (const loc of LOCALES) {
   let page = master
@@ -323,6 +333,7 @@ for (const loc of LOCALES) {
 
 // Plugin detail pages: /p/{owner}/{repo}[--subdir]/ per locale
 const detailMaster = fs.readFileSync('site/detail-template.html', 'utf8')
+  .replaceAll('__CLOUDFLARE_WEB_ANALYTICS__', () => cloudflareAnalytics)
 const readmes = fs.existsSync('data/readmes.json') ? JSON.parse(fs.readFileSync('data/readmes.json', 'utf8')) : {}
 
 // render a plugin README to safe HTML: raw HTML dropped, headings demoted,
