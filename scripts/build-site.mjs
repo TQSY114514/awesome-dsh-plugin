@@ -266,7 +266,7 @@ function langRedirect(current) {
 }
 
 const master = fs.readFileSync('site/template.html', 'utf8')
-  .replaceAll('__CLOUDFLARE_WEB_ANALYTICS__', () => cloudflareAnalytics)
+  .replaceAll('<!-- __ANALYTICS_SNIPPET__ -->', () => cloudflareAnalytics)
 
 for (const loc of LOCALES) {
   let page = master
@@ -333,7 +333,7 @@ for (const loc of LOCALES) {
 
 // Plugin detail pages: /p/{owner}/{repo}[--subdir]/ per locale
 const detailMaster = fs.readFileSync('site/detail-template.html', 'utf8')
-  .replaceAll('__CLOUDFLARE_WEB_ANALYTICS__', () => cloudflareAnalytics)
+  .replaceAll('<!-- __ANALYTICS_SNIPPET__ -->', () => cloudflareAnalytics)
 const readmes = fs.existsSync('data/readmes.json') ? JSON.parse(fs.readFileSync('data/readmes.json', 'utf8')) : {}
 
 // render a plugin README to safe HTML: raw HTML dropped, headings demoted,
